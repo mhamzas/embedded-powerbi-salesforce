@@ -1,0 +1,250 @@
+{
+  "info": {
+    "_postman_id": "9b12b893-1c3d-4181-88ac-4116dc4f7cd6",
+    "name": "PowerBI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31442384"
+  },
+  "item": [
+    {
+      "name": "Azure Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "const token = responseJson.access_token",
+              "pm.collectionVariables.set('token', token); "
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "type": "text",
+              "key": "client_id",
+              "value": "{{ClientID}}"
+            },
+            {
+              "type": "text",
+              "key": "client_secret",
+              "value": "{{Secret}}"
+            },
+            {
+              "type": "text",
+              "key": "scope",
+              "value": "https://analysis.windows.net/powerbi/api/.default"
+            },
+            {
+              "type": "text",
+              "key": "grant_type",
+              "value": "client_credentials"
+            },
+            {
+              "type": "text",
+              "key": "client_info",
+              "value": "1"
+            },
+            {
+              "key": "TenantID: aaa\n\n ClientID: aaa \n\nSecret: aaa \n\n ",
+              "value": "",
+              "type": "text",
+              "uuid": "c8c3b780-1282-4c90-9ba2-84b0cf4dc691"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://login.microsoftonline.com/{{TenantID}}/oauth2/v2.0/token",
+          "protocol": "https",
+          "host": [
+            "login",
+            "microsoftonline",
+            "com"
+          ],
+          "path": [
+            "{{TenantID}}",
+            "oauth2",
+            "v2.0",
+            "token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PowerBI Report",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const responseJson = pm.response.json();",
+              "const datasetId = responseJson.datasetId",
+              "pm.collectionVariables.set('datasetId', datasetId); "
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "https://api.powerbi.com/v1.0/myorg/groups/{{WorkspaceID}}/reports/{{ReportID}}",
+          "protocol": "https",
+          "host": [
+            "api",
+            "powerbi",
+            "com"
+          ],
+          "path": [
+            "v1.0",
+            "myorg",
+            "groups",
+            "{{WorkspaceID}}",
+            "reports",
+            "{{ReportID}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PowerBI Report Token",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZTZkMmQ0Y2MtYjc2Mi00ODZlLTg4OTQtNGY1ZjQ0MGQ1ZjMxLyIsImlhdCI6MTc3NjExNjI4MSwibmJmIjoxNzc2MTE2MjgxLCJleHAiOjE3NzYxMjAxODEsImFpbyI6IkFTUUEyLzhiQUFBQUZHZFhRZk8ycmR5WVV0blJSYXFIVHZuUGh6bTkwTWh6aXI4U2loaXhZODg9IiwiYXBwaWQiOiJkM2MwNDJkYS0zYmNkLTQ1MjktYTk0Zi0zMDMxNWJkMjdiNjMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lNmQyZDRjYy1iNzYyLTQ4NmUtODg5NC00ZjVmNDQwZDVmMzEvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI0MThjMTQ4My1kZmY1LTQxNTAtOWQ1Ni01Y2JhM2FhYmE1ZWEiLCJyaCI6IjEuQVVJQXpOVFM1bUszYmtpSWxFOWZSQTFmTVFrQUFBQUFBQUFBd0FBQUFBQUFBQUFBQUFCQ0FBLiIsInN1YiI6IjQxOGMxNDgzLWRmZjUtNDE1MC05ZDU2LTVjYmEzYWFiYTVlYSIsInRpZCI6ImU2ZDJkNGNjLWI3NjItNDg2ZS04ODk0LTRmNWY0NDBkNWYzMSIsInV0aSI6Imp4MEFhUWNiS1VHaDZOMW4xeEVJQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfYWN0X2ZjdCI6IjkgMyIsInhtc19mdGQiOiJLQVRVYjBEdkVEZEtkQmxnLURsQzkxVmtNNERPbEdkaDE5YVJJRjgwOGlBQllYVnpkSEpoYkdsaFpXRnpkQzFrYzIxeiIsInhtc19pZHJlbCI6IjcgOCIsInhtc19yZCI6IjAuNDJMbFlCSmlkQklTNFdBWEVwQ1ZMRDJscHlidHVFSERQczd4ZmVKV0lSRU9UaUdCbDlZN3hDNVlNdmxOODAwOUtXenBkRVJJaElORFNJQ1RBUUlPUUdraEVRNXVJWUhaUEV2NGluLXBHUDl1RldCMkNkTDRBQUEiLCJ4bXNfc3ViX2ZjdCI6IjMgOSJ9.mEdjpxeg0upQwJnck0pe3cscTLqtfsUjQ5quI0HomYQ0Ox3LVCQktWPIsNjz-5bOt3PTUjGq4iwM6hCD2dZZmmvh4Z6JX0MgDZLrDXaRGn6GXuDbb8OeHWbnO5PQRj5nCwRxrpWDnpJweXG0rJHWTLEpO8_WFEeAAWOLT-VS_rtptbfTeTgpICnbRmo5QS35KAc5e39Gym1mgipRG8s9vCEwwQXMHZf7isiRZ1fRwM1IGJFtggtCJYuiKNrPI9eLwP_kqJO48KMH_hKi1UTwAND7XPAzhf0g9YC78uWtgZxGjdsO_A-4R4VsWJZs8zMP7N-qEUU4x8_ACFTiIoi7uw",
+            "disabled": true
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"accessLevel\": \"View\",\n    \"identities\": [\n        {\n            \"username\": \"r34rwfvfwrju\",\n            \"roles\": [\"NSN\"],\n            \"datasets\": [\"{{datasetId}}\"],\n            \"customData\": \"143580017\"\n        }\n    ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://api.powerbi.com/v1.0/myorg/groups/{{WorkspaceID}}/reports/{{ReportID}}/GenerateToken",
+          "protocol": "https",
+          "host": [
+            "api",
+            "powerbi",
+            "com"
+          ],
+          "path": [
+            "v1.0",
+            "myorg",
+            "groups",
+            "{{WorkspaceID}}",
+            "reports",
+            "{{ReportID}}",
+            "GenerateToken"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get PowerBI Report Pages",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCIsImtpZCI6IlUxc1g4WUZIUzdaNlZsN1ZITEl6VGVqYnZqMCJ9.eyJhdWQiOiJodHRwczovL2FuYWx5c2lzLndpbmRvd3MubmV0L3Bvd2VyYmkvYXBpIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZTZkMmQ0Y2MtYjc2Mi00ODZlLTg4OTQtNGY1ZjQ0MGQ1ZjMxLyIsImlhdCI6MTc3NjEyODQ0MSwibmJmIjoxNzc2MTI4NDQxLCJleHAiOjE3NzYxMzIzNDEsImFpbyI6ImsyWmdZR2c4bDgzZ3ovZkQ2V3pDa3B1Y2l0ZnloRTZ1ZlA5RTlnNnpTbGhpNlJuNXVaWUEiLCJhcHBpZCI6ImQzYzA0MmRhLTNiY2QtNDUyOS1hOTRmLTMwMzE1YmQyN2I2MyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2U2ZDJkNGNjLWI3NjItNDg2ZS04ODk0LTRmNWY0NDBkNWYzMS8iLCJpZHR5cCI6ImFwcCIsIm9pZCI6IjQxOGMxNDgzLWRmZjUtNDE1MC05ZDU2LTVjYmEzYWFiYTVlYSIsInJoIjoiMS5BVUlBek5UUzVtSzNia2lJbEU5ZlJBMWZNUWtBQUFBQUFBQUF3QUFBQUFBQUFBQUFBQUJDQUEuIiwic3ViIjoiNDE4YzE0ODMtZGZmNS00MTUwLTlkNTYtNWNiYTNhYWJhNWVhIiwidGlkIjoiZTZkMmQ0Y2MtYjc2Mi00ODZlLTg4OTQtNGY1ZjQ0MGQ1ZjMxIiwidXRpIjoiNkhPOGJHTElhMEdHV2Y5Vkt3QVJBQSIsInZlciI6IjEuMCIsInhtc19hY3RfZmN0IjoiMyA5IiwieG1zX2Z0ZCI6Imh6dkFJbkRDWjBqUkV0QnNub1lVelRGQ3BWR1lWdFBtZi11bHFqRzY3amdCWVhWemRISmhiR2xoWldGemRDMWtjMjF6IiwieG1zX2lkcmVsIjoiMTYgNyIsInhtc19yZCI6IjAuNDJMbFlCSmlkQklTNFdBWEVwQ1ZMRDJscHlidHVFSERQczd4ZmVKV0lSRU9UaUdCbDlZN3hDNVlNdmxOODAwOUtXenBkRVJJaElORFNJQ1RBUUlPUUdraEVRNXVJWUhaUEV2NGluLXBHUDl1RldCMkNkTDRBQUEiLCJ4bXNfc3ViX2ZjdCI6IjMgOSJ9.i19jkID2_cev_tTTlfvyBzbdJb1Q5jSG5HFrOiVUXiUd1xGtQ4boQHiIhDt5NollKpNrP00jbdfNNb6wfKrUygJ-tVzHRtGZI9oWZEQBe7wLGtcPCPxJKKLvG3rpi33kBHmFktfrdZbNahxa3Tf9YjtilJ5OK-yDX3L2cWCpQYqe8LF-fql95RpsJIXJFf6aZEt8GpWB8llglE5Yy8KX4bcUX8cF3KrUd9c2ygFG_YyApjMgCErVo6Kq5FmiHsRxXXyI9UhVgbHMA7kWv_MPd34Nod_RH1e4651JbKGs7gp5aqhO7cGsTMiMaSpWMeProW2c5jS6Yd8cQtpAW2wa6A",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.powerbi.com/v1.0/myorg/groups/{{WorkspaceID}}/reports/{{ReportID}}/pages/",
+          "protocol": "https",
+          "host": [
+            "api",
+            "powerbi",
+            "com"
+          ],
+          "path": [
+            "v1.0",
+            "myorg",
+            "groups",
+            "{{WorkspaceID}}",
+            "reports",
+            "{{ReportID}}",
+            "pages",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "datasetId",
+      "value": ""
+    }
+  ]
+}
